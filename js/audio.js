@@ -92,7 +92,12 @@
       tone({ f: 220, d: 0.25, type: 'square', v: 0.2 });
       tone({ f: 165, t: 0.25, d: 0.45, type: 'square', v: 0.2 });
     },
-    countdown() { tone({ f: 880, d: 0.08, type: 'square', v: 0.12 }); },
+    countdown(level) {
+      level = level || 0;                       // 0 (10 s) ... 9 (1 s): cada vez más agudo
+      const f = 700 + level * 90;
+      tone({ f: f, d: 0.09, type: 'square', v: 0.14 });
+      if (level >= 7) tone({ f: f * 1.25, t: 0.11, d: 0.09, type: 'square', v: 0.14 }); // doble pitido final
+    },
     toggleMute() {
       muted = !muted;
       try { localStorage.setItem('lucky-muted', muted ? '1' : '0'); } catch (e) {}

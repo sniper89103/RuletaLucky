@@ -70,6 +70,21 @@
         '<p class="m-text">La suerte ya viene en camino. ¡Gira de nuevo!</p>' +
         '<div class="m-actions"><button class="btn btn-main" data-act="close">Intentar otra vez 🎡</button></div></div>';
     },
+    settings: function (d) {
+      const presets = [15, 20, 30, 45, 60, 90];
+      const chips = presets.map(function (s) {
+        return '<button class="chip-btn' + (s === d.seconds ? ' on' : '') + '" data-act="time-set:' + s + '">' + s + 's</button>';
+      }).join('');
+      return '<div><span class="m-badge">⏱️ Configuración</span>' +
+        '<h2 class="m-title">Tiempo por pregunta</h2>' +
+        '<div class="stepper">' +
+        '<button class="step-btn" data-act="time-minus" aria-label="Menos tiempo">−</button>' +
+        '<div class="step-val"><b id="setVal">' + d.seconds + '</b><small>segundos</small></div>' +
+        '<button class="step-btn" data-act="time-plus" aria-label="Más tiempo">+</button></div>' +
+        '<div class="chips">' + chips + '</div>' +
+        '<p class="m-hint">Rango de 5 a 120 segundos. Se guarda automáticamente.</p>' +
+        '<div class="m-actions"><button class="btn btn-main" data-act="close">Listo ✔</button></div></div>';
+    },
     done: function () {
       return '<div><div class="big-emoji">🏁</div>' +
         '<h2 class="m-title">¡Se acabaron las preguntas!</h2>' +

@@ -191,6 +191,7 @@ kbd {
 
 /* ---------- Controles ---------- */
 
+
 .controls {
   position: relative;
   z-index: 2;
@@ -199,8 +200,10 @@ kbd {
   gap: 12px;
   flex-wrap: wrap;
   padding: 14px 16px 18px;
+
   left: -150px !important;
 }
+
 
 .ctl {
   background: rgba(255,255,255,.08); color: #fff;

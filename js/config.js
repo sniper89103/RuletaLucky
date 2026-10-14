@@ -5,7 +5,7 @@
 window.LUCKY = {
   storageKey: 'lucky-roulette-v1',
   spinDurationMs: 5600,      // duración del giro
-  questionSeconds: 30,       // tiempo para responder cada pregunta
+  questionSeconds: 50,       // tiempo para responder cada pregunta
 
   // Las 7 preguntas (se sortean sin repetirse)
   questions: [

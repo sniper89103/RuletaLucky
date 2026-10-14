@@ -1,0 +1,67 @@
+/* =========================================================
+   EXTRAS · alerta de últimos 10 segundos + configuración de tiempo
+   (se carga después de styles.css)
+   ========================================================= */
+
+/* ---------- Temporizador: alerta ---------- */
+.timer {
+  transition: width .45s cubic-bezier(.34,1.56,.64,1), height .45s cubic-bezier(.34,1.56,.64,1);
+}
+.timer.alert { width: 150px; height: 150px; }
+.timer.alert .t-fg { stroke: #FF9F43; stroke-width: 9; }
+.timer.alert span { font-size: 3.4rem; color: #FFD27A; }
+
+.timer.low .t-fg { stroke: #FF4D6A; }
+.timer.low span { color: #FF6B7D; text-shadow: 0 0 20px rgba(255,77,106,.9); }
+
+/* el número "salta" en cada segundo */
+.timer span.tick { animation: numPop .9s ease-out; }
+@keyframes numPop {
+  0%   { transform: scale(2.1); opacity: .15; }
+  25%  { transform: scale(1);   opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ---------- Ventana en modo peligro ---------- */
+.modal.danger .modal-backdrop {
+  background: radial-gradient(circle at center, rgba(10,6,22,.72) 35%, rgba(200,30,60,.55) 100%);
+  animation: vignette 1s ease-in-out infinite;
+}
+@keyframes vignette { 50% { filter: brightness(1.4); } }
+.modal.danger .modal-card {
+  border-color: #FF9F43;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 90px rgba(255,107,125,.55);
+}
+.modal.panic #modalBody { animation: jitter .3s linear infinite; }
+@keyframes jitter {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -2px); }
+}
+
+/* ---------- Configuración de tiempo ---------- */
+.stepper {
+  display: flex; align-items: center; justify-content: center; gap: 22px; margin: 18px 0 20px;
+}
+.step-btn {
+  width: 64px; height: 64px; border-radius: 50%;
+  font-size: 2rem; font-weight: 800; line-height: 1; color: #fff;
+  background: linear-gradient(135deg, #8C77BE, var(--p-dark));
+  box-shadow: 0 8px 20px rgba(122,101,171,.5);
+  transition: transform .15s;
+}
+.step-btn:hover { transform: scale(1.1); }
+.step-btn:active { transform: scale(.92); }
+.step-val { min-width: 120px; display: flex; flex-direction: column; align-items: center; }
+.step-val b { font-size: 4rem; font-weight: 800; line-height: 1; color: var(--gold); }
+.step-val small { color: var(--p-light); font-size: .85rem; margin-top: 4px; }
+
+.chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.chip-btn {
+  padding: 8px 16px; border-radius: 999px; font-size: .9rem; font-weight: 700; color: #fff;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.28);
+  transition: all .2s;
+}
+.chip-btn:hover { background: rgba(122,101,171,.55); }
+.chip-btn.on { background: var(--gold); color: var(--p-deep); border-color: #fff; }

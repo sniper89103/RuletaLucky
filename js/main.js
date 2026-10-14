@@ -10,6 +10,15 @@
 
   const spinBtn = $('#spinBtn'), spinLabel = $('#spinLabel'), wrap = $('#wheelWrap');
   const TOTAL = C.questions.length;
+  const modalEl = $('#modal');
+  const MIN_S = 5, MAX_S = 120, STEP_S = 5;
+  let seconds = (function () {
+    try {
+      const v = parseInt(localStorage.getItem('lucky-seconds'), 10);
+      if (v >= MIN_S && v <= MAX_S) return v;
+    } catch (e) {}
+    return C.questionSeconds;
+  })();
 
   /* ---------- Estado ---------- */
   function shuffle(a) {
@@ -116,25 +125,49 @@
     save(); renderHud();
     const n = TOTAL - state.remaining.length;
     A.reveal();
-    UI.open('question', { n: n, total: TOTAL, text: C.questions[qIdx], seconds: C.questionSeconds }, false);
+    modalEl.classList.remove('danger', 'panic');
+    UI.open('question', { n: n, total: TOTAL, text: C.questions[qIdx], seconds: seconds }, false);
 
-    let left = C.questionSeconds;
+    let left = seconds;
     const arc = $('#timerArc'), num = $('#timerNum'), timer = $('#timer'), hint = $('#timerHint');
     const CIRC = 276.46;
     stopTimer();
     timerId = setInterval(function () {
       left--;
       if (num) num.textContent = Math.max(left, 0);
-      if (arc) arc.style.strokeDashoffset = (CIRC * (1 - left / C.questionSeconds)).toFixed(2);
-      if (left <= 5 && left > 0) { if (timer) timer.classList.add('low'); A.countdown(); }
+      if (arc) arc.style.strokeDashoffset = (CIRC * (1 - left / seconds)).toFixed(2);
+      if (left <= 10 && left > 0) {            // ALERTA: últimos 10 segundos
+        if (timer) { timer.classList.add('alert'); if (left <= 5) timer.classList.add('low'); }
+        modalEl.classList.add('danger');
+        if (left <= 3) { modalEl.classList.add('panic'); if (navigator.vibrate) navigator.vibrate(60); }
+        if (num) { num.classList.remove('tick'); void num.offsetWidth; num.classList.add('tick'); }
+        if (hint) hint.textContent = '⚠️ ¡Últimos segundos!';
+        A.countdown(10 - left);
+      }
       if (left <= 0) {
         stopTimer(); A.timeUp();
         if (hint) hint.textContent = '⏰ ¡Se acabó el tiempo!';
+        modalEl.classList.remove('panic');
       }
     }, 1000);
   }
 
+  function changeSeconds(act) {
+    let v = seconds;
+    if (act === 'time-minus') v -= STEP_S;
+    else if (act === 'time-plus') v += STEP_S;
+    else v = parseInt(act.split(':')[1], 10) || v;
+    seconds = Math.min(MAX_S, Math.max(MIN_S, v));
+    try { localStorage.setItem('lucky-seconds', String(seconds)); } catch (e) {}
+    const val = $('#setVal'); if (val) val.textContent = seconds;
+    document.querySelectorAll('.chip-btn').forEach(function (b) {
+      b.classList.toggle('on', b.textContent === seconds + 's');
+    });
+    A.pop();
+  }
+
   UI.onAction(function (act) {
+    if (act.indexOf('time-') === 0) { changeSeconds(act); return; }
     if (act === 'correct') {
       stopTimer();
       state.correct++; save(); renderHud(); bump('#stCorrect');
@@ -149,6 +182,7 @@
 
   UI.onClose(function () {
     stopTimer();
+    modalEl.classList.remove('danger', 'panic');
     F.clear();
     wheel.winIndex = null;
     if (state.remaining.length === 0 && !state.doneShown) {
@@ -177,6 +211,13 @@
     } else {
       document.exitFullscreen();
     }
+  });
+
+  const btnTime = $('#btnTime');
+  if (btnTime) btnTime.addEventListener('click', function () {
+    if (wheel.spinning || UI.isOpen()) return;
+    A.unlock(); A.pop();
+    UI.open('settings', { seconds: seconds }, true);
   });
 
   $('#btnReset').addEventListener('click', function () {
