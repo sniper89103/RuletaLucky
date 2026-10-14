@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ruleta Lucky · Grupo Lucky</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ===== Logo Grupo Lucky (vectorial, reutilizable) ===== -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="lgTop" gradientUnits="userSpaceOnUse" x1="380" y1="260" x2="800" y2="0">
+        <stop offset="0.2" stop-color="#7A65AB"/>
+        <stop offset="1" stop-color="#7A65AB" stop-opacity="0.06"/>
+      </linearGradient>
+      <linearGradient id="lgBottom" gradientUnits="userSpaceOnUse" x1="430" y1="560" x2="0" y2="807">
+        <stop offset="0.2" stop-color="#7A65AB"/>
+        <stop offset="1" stop-color="#7A65AB" stop-opacity="0.06"/>
+      </linearGradient>
+    </defs>
+    <symbol id="lucky-mark" viewBox="0 0 807 807">
+      <path fill="#7A65AB" d="M242,242 L310,497 L0,807 L0,540 C0,510 12,470 40,443 Z"/>
+      <path fill="#7A65AB" d="M807,0 L807,265 C807,305 790,340 765,363 L565,565 L497,310 Z"/>
+      <path fill="url(#lgTop)" d="M242,242 L497,310 L807,0 L538,0 C500,0 470,15 445,40 Z"/>
+      <path fill="url(#lgBottom)" d="M310,497 L565,565 L365,765 C340,790 305,807 268,807 L0,807 Z"/>
+    </symbol>
+  </svg>
+
+  <!-- ===== Fondo animado ===== -->
+  <div class="bg" aria-hidden="true">
+    <div class="bg-glow"></div>
+    <div id="diamonds"></div>
+  </div>
+
+  <!-- ===== Encabezado ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 807 807"><use href="#lucky-mark"/></svg>
+      <div class="brand-text"><span class="b-light">Grupo</span><span class="b-bold">Lucky</span></div>
+    </div>
+    <div class="topbar-title">
+      <span class="chip">Reclutamiento · GRUPO LUCKY</span>
+    </div>
+  </header>
+
+  <!-- ===== Escenario ===== -->
+  <main class="stage">
+
+    <section class="wheel-zone">
+      <h1 class="headline">¡Gira, responde y <span class="grad">gana!</span></h1>
+
+      <div class="wheel-wrap" id="wheelWrap">
+        <div class="wheel-halo"></div>
+        <canvas id="wheel" aria-label="Ruleta de premios y preguntas"></canvas>
+
+        <!-- Puntero -->
+        <div class="pointer" id="pointer" aria-hidden="true">
+          <svg viewBox="0 0 40 62">
+            <defs>
+              <linearGradient id="ptG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#FFE29A"/><stop offset="1" stop-color="#F5B942"/>
+              </linearGradient>
+            </defs>
+            <path d="M20 2 C31 2 38 10 38 21 C38 33 27 44 20 60 C13 44 2 33 2 21 C2 10 9 2 20 2Z" fill="url(#ptG)" stroke="#fff" stroke-width="3"/>
+            <circle cx="20" cy="21" r="7" fill="#4B3A7A"/>
+          </svg>
+        </div>
+
+        <!-- Botón central -->
+        <button id="spinBtn" class="spin-btn" type="button" aria-label="Girar la ruleta">
+          <span id="spinLabel">GIRAR</span>
+        </button>
+      </div>
+
+      <p class="hint">Toca <b>GIRAR</b> o presiona la tecla <kbd>Espacio</kbd></p>
+    </section>
+
+    <!-- ===== Tablero lateral ===== -->
+    <aside class="panel">
+      <div class="panel-card">
+        <h2>Preguntas</h2>
+        <div class="q-count"><b id="qLeft">7</b><span> / 7 disponibles</span></div>
+        <ul class="q-dots" id="qDots"></ul>
+      </div>
+
+      <div class="panel-card stats">
+        <h2>Marcador</h2>
+        <div class="stat"><span class="s-ico">🎡</span><span class="s-name">Giros</span><b id="stSpins">0</b></div>
+        <div class="stat"><span class="s-ico">✅</span><span class="s-name">Aciertos</span><b id="stCorrect">0</b></div>
+        <div class="stat"><span class="s-ico">🏷️</span><span class="s-name">Stickers</span><b id="stStickers">0</b></div>
+        <div class="stat"><span class="s-ico">🎁</span><span class="s-name">Sorpresas</span><b id="stSurprise">0</b></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ===== Controles ===== -->
+  <footer class="controls">
+    <button id="btnSound" class="ctl" type="button" title="Sonido">🔊 <span>Sonido</span></button>
+    <button id="btnFull" class="ctl" type="button" title="Pantalla completa">⛶ <span>Pantalla completa</span></button>
+    <button id="btnReset" class="ctl ctl-danger" type="button" title="Reiniciar juego">↺ <span>Reiniciar</span></button>
+  </footer>
+
+  <!-- ===== Confeti ===== -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <!-- ===== Ventana flotante ===== -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-backdrop"></div>
+    <div class="modal-card" id="modalCard" role="dialog" aria-modal="true">
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div id="toast" class="toast" role="status"></div>
+
+  <!-- Scripts (sin módulos, para abrir con doble clic) -->
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/confetti.js"></script>
+  <script src="js/wheel.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
